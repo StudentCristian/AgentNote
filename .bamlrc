@@ -1,0 +1,14 @@
+{
+  "version": "0.56.0",
+  "default_client": "GoogleGeminiClient",
+  "clients": {
+    "GoogleGeminiClient": {
+      "provider": "google-ai"
+    }
+  },
+  "env": {
+    "GOOGLE_AI_API_KEY": {
+      "required": true
+    }
+  }
+}

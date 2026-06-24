@@ -1,0 +1,119 @@
+"use client"
+
+import { useState } from "react"
+import { Card } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { AudioBottomBar } from "@/components/audio/audio-bottom-bar"
+import { SectionedTranscriptEditor } from "@/components/transcript/sectioned-transcript-editor"
+
+export function NuevaConsultaClient() {
+  // State para paciente seleccionado
+  const [selectedPatient, setSelectedPatient] = useState<string | null>(null)
+  
+  // State para plantilla seleccionada
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
+
+  // State para audio y transcripción
+  const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null)
+  const [isTranscribing, setIsTranscribing] = useState(false)
+  const [transcriptionData, setTranscriptionData] = useState<Record<string, string>>({})
+
+  return (
+    <div className="flex h-full flex-col bg-background">
+      {/* Contenido principal */}
+      <div className="flex-1 overflow-auto p-8">
+        <div className="mx-auto max-w-5xl space-y-6">
+          {/* Header */}
+          <div>
+            <h1 className="text-4xl font-bold text-foreground">Nueva Consulta</h1>
+            <p className="mt-2 text-muted-foreground">
+              Crea una nueva consulta clínica: selecciona paciente, plantilla, graba audio y genera el documento Word.
+            </p>
+          </div>
+
+          <Separator />
+
+          {/* Sección 1: Selección de Paciente */}
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold text-foreground">1. Paciente</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Selecciona un paciente existente o crea uno nuevo.
+            </p>
+            <div className="mt-4 rounded-lg bg-muted p-4">
+              <p className="text-sm text-muted-foreground">
+                {selectedPatient ? `Paciente: ${selectedPatient}` : "No hay paciente seleccionado"}
+              </p>
+            </div>
+          </Card>
+
+          {/* Sección 2: Selección de Plantilla */}
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold text-foreground">2. Plantilla</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Selecciona o sube una plantilla DOCX con placeholders.
+            </p>
+            <div className="mt-4 rounded-lg bg-muted p-4">
+              <p className="text-sm text-muted-foreground">
+                {selectedTemplate ? `Plantilla: ${selectedTemplate}` : "Se usará plantilla por defecto"}
+              </p>
+            </div>
+          </Card>
+
+          {/* Sección 3: Audio Recording */}
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold text-foreground">3. Grabación de Audio</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Usa el panel inferior para grabar audio de la consulta.
+            </p>
+            <div className="mt-4 rounded-lg bg-muted p-4">
+              <p className="text-sm text-muted-foreground">
+                Área de grabación (en construcción)
+              </p>
+            </div>
+          </Card>
+
+          {/* Sección 4: Transcripción */}
+          {isTranscribing && (
+            <Card className="p-6">
+              <h2 className="text-lg font-semibold text-foreground">4. Transcripción</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Revisa y edita los campos generados por la IA.
+              </p>
+              <div className="mt-4">
+                <SectionedTranscriptEditor
+                  initialData={transcriptionData}
+                  onSave={setTranscriptionData}
+                  disabled={false}
+                />
+              </div>
+            </Card>
+          )}
+
+          {/* Sección 5: Generación de Documento */}
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold text-foreground">5. Generar Documento</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Genera y descarga el documento Word final.
+            </p>
+            <div className="mt-4 rounded-lg bg-muted p-4">
+              <p className="text-sm text-muted-foreground">
+                Botón de generación (en construcción)
+              </p>
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      {/* Barra inferior fija de audio */}
+      <div className="border-t border-border bg-background p-4">
+        <div className="mx-auto max-w-5xl">
+          <AudioBottomBar
+            onAudioRecorded={setRecordedAudio}
+            onTranscriptionStart={() => setIsTranscribing(true)}
+            disabled={!selectedPatient || !selectedTemplate}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
